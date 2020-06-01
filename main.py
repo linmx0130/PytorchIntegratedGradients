@@ -24,10 +24,13 @@ def runvis():
     imgFile = request.files['image-upload']
     if imgFile.filename == "":
         return redirect(request.url)
+    sampleSize = int(request.form['sample-size'])
+    thresh = float(request.form['thresh'])
     newFilename = generateFilename(imgFile.filename)
     newFilepath = os.path.join('upload', newFilename)
-    imgFile.save(newFilename)
-    gradImg, cropImg, clsResult = core.integratedGradient(newFilename, sampleSize=60)
+    imgFile.save(newFilepath)
+    igradImg, gradImg, cropImg, clsResult = core.integratedGradient(newFilepath, sampleSize=sampleSize, thresh=thresh)
+    igradImg.save(newFilepath + "igrad.jpg")
     gradImg.save(newFilepath + "grad.jpg")
     cropImg.save(newFilepath + "crop.jpg")
 

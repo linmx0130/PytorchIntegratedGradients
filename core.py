@@ -48,7 +48,7 @@ def gradientMethod(filename):
     croppedImg = toPIL(nimt)
     return imgGradView, croppedImg, int(cls.argmax())
 
-def integratedGradient(filename, baseline=None, sampleSize=10):
+def integratedGradient(filename, baseline=None, sampleSize=10, thresh=0.05):
     imt, nimt = readAndCropImage(filename, showImg=False, showCropImg=False)
     if baseline is None:
         baseline = torch.zeros_like(imt)
@@ -67,13 +67,15 @@ def integratedGradient(filename, baseline=None, sampleSize=10):
     oneHotGrad[:, clsResult] = 1
     print('cls result = ', clsResult)
     cls.backward(oneHotGrad)
-    imgGrad = batch_input.grad.mean(dim=0)
-    imgGradView = buildGradImage(imgGrad, nimt)
+    imgIGrad = batch_input.grad.mean(dim=0)
+    imgIGradView = buildGradImage(imgIGrad, nimt - baseline, thresh=thresh)
+    imgBasicGrad = batch_input.grad[len(alpha_range) - 1]
+    imgBasicGradView=  buildGradImage(imgBasicGrad, nimt, thresh = thresh) 
     croppedImg = toPIL(nimt)
-    return imgGradView, croppedImg, int(clsResult)
+    return imgIGradView, imgBasicGradView, croppedImg, int(clsResult)
     
 if __name__ == "__main__":
     # gradientMethod('dataset/n01443537/11.jpg')
     img = integratedGradient('dataset/n01443537/11.jpg', sampleSize=100)
-    img.show()
-    img.save("igrad.png")
+    img[0].show()
+    img[0].save("igrad.png")

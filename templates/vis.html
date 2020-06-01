@@ -2,12 +2,36 @@
 <html>
     <head>
         <title>Understand Neural Network</title>
+        <link rel="stylesheet" href={{ url_for('static', filename="styles.css") }}>
     </head>
     <body>
-        <p> Classification prediction: {{ cls }}</p>
-        <p>
-            <img src="/img/{{ imgFn+'crop.jpg' }}"/>
-            <img src="/img/{{ imgFn+'grad.jpg' }}"/>
-        </p>
+        <h2> Classification prediction: {{ cls }}</h2>
+        <div>
+            <div class="image-frame">
+                <div>
+                    <img src="/img/{{ imgFn+'crop.jpg' }}"/>
+                </div>
+                <div> 
+                    <label>Cropped image</label>
+                </div>
+            </div>
+            <div class="image-frame">
+                <div>
+                    <img src="/img/{{ imgFn+'igrad.jpg' }}"/>
+                </div>
+                <div>
+                    <label>IG result</label>
+                </div>
+            </div>
+            <div class="image-frame">
+                <div>
+                    <img src="/img/{{ imgFn+'grad.jpg' }}"/>
+                </div>
+                <div>
+                    <label>Basic gradient result</label>
+                </div>
+            </div>
+
+        </div>
     </body>
 </html>
