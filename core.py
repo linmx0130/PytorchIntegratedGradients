@@ -35,6 +35,27 @@ def buildGradImage(gimt, nimt, thresh = 0.05):
     imgGradView = toPIL(imgGradView)
     return imgGradView
 
+def buildFastGradAttackImage(filename, theta=0.07):
+    rebuildTransform = T.Compose([T.Resize(256), T.ToTensor()])
+    baseImg = Image.open(filename)
+    baseImgT = rebuildTransform(baseImg)
+    c, H, W = baseImgT.shape
+    imt, nimt = readAndCropImage(filename, showImg=False, showCropImg=False)
+    imt = imt.resize(1, 3, 224, 224)
+    gimt = imt.clone().detach().requires_grad_(True)
+    cls = resnet18(gimt)
+    target = torch.tensor([cls.argmax()])
+    loss = torch.nn.functional.cross_entropy(cls, target)
+    loss.backward()
+    attack_imt = nimt + theta * torch.sign(gimt.grad[0])
+    attack_imt = torch.min(attack_imt, torch.ones_like(attack_imt))
+    attack_imt = torch.max(attack_imt, torch.zeros_like(attack_imt))
+
+    offsetH = H // 2 - 112
+    offsetW = W // 2 - 112
+    baseImgT[:, offsetH: offsetH + 224, offsetW : offsetW + 224] = attack_imt
+    attack_im = toPIL(baseImgT)
+    return attack_im
 
 def gradientMethod(filename):
     imt, nimt = readAndCropImage(filename, showImg=False, showCropImg=False)
@@ -62,20 +83,26 @@ def integratedGradient(filename, baseline=None, sampleSize=10, thresh=0.05):
 
     cls = resnet18(batch_input)
     clsResult = cls[-1].argmax()
-    oneHotGrad = torch.zeros_like(cls)
-    print(oneHotGrad.shape)
-    oneHotGrad[:, clsResult] = 1
+    #oneHotGrad = torch.zeros_like(cls)
+    #print(oneHotGrad.shape)
+    #oneHotGrad[:, clsResult] = 1
     print('cls result = ', clsResult)
-    cls.backward(oneHotGrad)
+    target = torch.ones(cls.shape[0], dtype=torch.long) * clsResult
+    loss = torch.nn.functional.cross_entropy(cls, target)
+    loss.backward()
     imgIGrad = batch_input.grad.mean(dim=0)
     imgIGradView = buildGradImage(imgIGrad, nimt - baseline, thresh=thresh)
     imgBasicGrad = batch_input.grad[len(alpha_range) - 1]
     imgBasicGradView=  buildGradImage(imgBasicGrad, nimt, thresh = thresh) 
     croppedImg = toPIL(nimt)
     return imgIGradView, imgBasicGradView, croppedImg, int(clsResult)
+
+
     
 if __name__ == "__main__":
     # gradientMethod('dataset/n01443537/11.jpg')
-    img = integratedGradient('dataset/n01443537/11.jpg', sampleSize=100)
-    img[0].show()
-    img[0].save("igrad.png")
+
+    # img = integratedGradient('dataset/n01443537/11.jpg', sampleSize=100)
+    # img[0].show()
+    # img[0].save("igrad.png")
+    from IPython import embed; embed()

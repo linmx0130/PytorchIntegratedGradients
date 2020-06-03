@@ -4,33 +4,42 @@
         <title>Understand Neural Network</title>
     </head>
     <body>
-        <h1>Try an image!</h1>
-        <form action="/runvis" method="post" enctype="multipart/form-data">
-            <label for="image-upload">Image File: </label>
-            <input type="file" name="image-upload" accept="image/*" multiple/>
-            <br/>
-            <label>Sample size for IG:</label>
-            <select name="sample-size">
-                <option value=20> 20 </option>
-                <option value=40> 40 </option>
-                <option value=60> 60 </option>
-                <option value=80> 80 </option>
-                <option value=100> 100 </option>
-                <option value=120> 120 </option>
-            </select>
-            </br>
-            <label>Threshold for visualization:</label>
-            <select name="thresh">
-                <option value=0.01> 1% </option>
-                <option value=0.02> 2% </option>
-                <option value=0.05> 5% </option>
-                <option value=0.08> 8% </option>
-                <option value=0.10> 10% </option>
-                <option value=0.15> 15% </option>
-            </select>
-            </br>
-
-            <input type="submit" value="Submit">
-        </form>
+        <div>
+            <h1>See how neural network understand this image!</h1>
+            <form action="/runvis" method="post" enctype="multipart/form-data" target="_blank">
+                <label for="image-upload">Image File: </label>
+                <input type="file" name="image-upload" accept="image/*" multiple/>
+                <br/>
+                <label>Sample size for IG:</label>
+                <select name="sample-size">
+                    <option value=20> 20 </option>
+                    <option value=40> 40 </option>
+                    <option value=60> 60 </option>
+                    <option value=80> 80 </option>
+                    <option value=100> 100 </option>
+                    <option value=120> 120 </option>
+                </select>
+                </br>
+                <label>Threshold for visualization:</label>
+                <select name="thresh">
+                    <option value=0.01> 1% </option>
+                    <option value=0.02> 2% </option>
+                    <option value=0.05> 5% </option>
+                    <option value=0.08> 8% </option>
+                    <option value=0.10> 10% </option>
+                    <option value=0.15> 15% </option>
+                </select>
+                </br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <div>
+            <h2>Build an adversarial example</h2>
+            <form action="/buildadv" method="post" enctype="multipart/form-data">
+                <label for="image-upload">Image File: </label>
+                <input type="file" name="image-upload" accept="image/*" multiple/>
+                <input type="submit" value="Build">
+            </from>
+        </div>
     </body>
 </html>
