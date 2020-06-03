@@ -30,12 +30,12 @@ def runvis():
     newFilename = generateFilename(imgFile.filename)
     newFilepath = os.path.join('upload', newFilename)
     imgFile.save(newFilepath)
-    igradImg, gradImg, cropImg, clsResult = core.integratedGradient(newFilepath, sampleSize=sampleSize, thresh=thresh)
+    igradImg, gradImg, cropImg, clsResult, clsScore = core.integratedGradient(newFilepath, sampleSize=sampleSize, thresh=thresh)
     igradImg.save(newFilepath + "igrad.jpg")
     gradImg.save(newFilepath + "grad.jpg")
     cropImg.save(newFilepath + "crop.jpg")
 
-    return render_template('vis.html', cls=ImageNetLabel[str(clsResult)], imgFn = newFilename)
+    return render_template('vis.html', cls=ImageNetLabel[str(clsResult)], imgFn = newFilename, clsScore = clsScore)
 
 @app.route("/buildadv", methods=["POST"])
 def buildadv():

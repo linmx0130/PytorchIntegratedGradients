@@ -83,6 +83,8 @@ def integratedGradient(filename, baseline=None, sampleSize=10, thresh=0.05):
 
     cls = resnet18(batch_input)
     clsResult = cls[-1].argmax()
+    clsScores = torch.nn.functional.softmax(cls[-1])
+    clsScore = clsScores[clsResult]
     #oneHotGrad = torch.zeros_like(cls)
     #print(oneHotGrad.shape)
     #oneHotGrad[:, clsResult] = 1
@@ -95,7 +97,7 @@ def integratedGradient(filename, baseline=None, sampleSize=10, thresh=0.05):
     imgBasicGrad = batch_input.grad[len(alpha_range) - 1]
     imgBasicGradView=  buildGradImage(imgBasicGrad, nimt, thresh = thresh) 
     croppedImg = toPIL(nimt)
-    return imgIGradView, imgBasicGradView, croppedImg, int(clsResult)
+    return imgIGradView, imgBasicGradView, croppedImg, int(clsResult), float(clsScore)
 
 
     

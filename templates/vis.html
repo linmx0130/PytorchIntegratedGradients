@@ -5,7 +5,11 @@
         <link rel="stylesheet" href={{ url_for('static', filename="styles.css") }}>
     </head>
     <body>
-        <h2> Classification prediction: {{ cls }}</h2>
+        <h2> Visualization of Attribution</h2>
+        <div>
+            <p> Classification prediction: {{ cls }}</p>
+            <p> Score: {{ clsScore }} </p>
+        </div>
         <div>
             <div class="image-frame">
                 <div>
